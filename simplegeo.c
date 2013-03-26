@@ -60,7 +60,6 @@ PHP_FUNCTION(simplegeo_point_in_polygon)
     n = Z_ARRVAL_P(zpolygon)->nNumOfElements;
     polygon = emalloc(sizeof(Point) * n);
 
-    zend_printf("N: %d\n", n);
     for (i = 0; i < n; i++) {
         if (zend_hash_index_find(Z_ARRVAL_P(zpolygon), i, (void**)&zpolypoint) == FAILURE) {
             RETURN_NULL();
@@ -69,11 +68,7 @@ PHP_FUNCTION(simplegeo_point_in_polygon)
         if (!make_point(*zpolypoint, &polygon[i])) {
             RETURN_NULL();
         }
-        zend_printf("Vertex %d -- x: %f y: %f\n", i, polygon[i].x, polygon[i].y, n);
-
-
     }
-    zend_printf("Point -- x: %f y: %f\n", point->x, point->y);
 
     in_polygon = point_in_polygon(point, polygon, n);
 
@@ -101,6 +96,8 @@ char extract_double(zval *zpoint, uint position, double *d)
 
     convert_to_double(*zvalue);
     *d = Z_DVAL_PP(zvalue);
+
+    return 1;
 }
 
 char point_in_polygon(Point * ppoint, Point * vertices, uint v_size)
