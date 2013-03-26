@@ -9,10 +9,10 @@ typedef struct _Point {
     double y;
 } Point;
 
-char make_point(zval *zpoint, Point *point);
-char extract_double(zval *zpoint, uint position, double *x);
-char point_in_polygon(Point * ppoint, Point * vertices, uint v_size);
-char point_equals(Point p1, Point p2);
+int make_point(zval *zpoint, Point *point);
+int extract_double(zval *zpoint, uint position, double *x);
+int point_in_polygon(Point * ppoint, Point * vertices, uint v_size);
+int point_equals(Point p1, Point p2);
 
 static zend_function_entry simplegeo_functions[] = {
     PHP_FE(simplegeo_point_in_polygon, NULL)
@@ -46,7 +46,7 @@ PHP_FUNCTION(simplegeo_point_in_polygon)
     Point * point;
     Point * polygon;
     uint i, n;
-    char in_polygon;
+    int in_polygon;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "aa", &zpoint, &zpolygon) == FAILURE) {
         RETURN_NULL();
@@ -78,7 +78,7 @@ PHP_FUNCTION(simplegeo_point_in_polygon)
     RETURN_BOOL(in_polygon);
 }
 
-char make_point(zval *zpoint, Point *point)
+int make_point(zval *zpoint, Point *point)
 {
     if (!extract_double(zpoint, 0, &(point->x))) return 0;
     if (!extract_double(zpoint, 1, &(point->y))) return 0;
@@ -86,7 +86,7 @@ char make_point(zval *zpoint, Point *point)
     return 1;
 }
 
-char extract_double(zval *zpoint, uint position, double *d)
+int extract_double(zval *zpoint, uint position, double *d)
 {
     zval **zvalue;
 
@@ -100,7 +100,7 @@ char extract_double(zval *zpoint, uint position, double *d)
     return 1;
 }
 
-char point_in_polygon(Point * ppoint, Point * vertices, uint v_size)
+int point_in_polygon(Point * ppoint, Point * vertices, uint v_size)
 {
     uint i, intersections;
     Point point, vertex1, vertex2;
@@ -156,7 +156,7 @@ char point_in_polygon(Point * ppoint, Point * vertices, uint v_size)
     return ((intersections % 2) != 0);
 }
 
-char point_equals(Point p1, Point p2)
+int point_equals(Point p1, Point p2)
 {
     return (p1.x == p2.x) && (p1.y == p2.y);
 }
